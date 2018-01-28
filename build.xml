@@ -3,8 +3,8 @@
 <project name="Test Jenkins" default="build">
 
   <target name="build"
-          depends="prepare,lint,phploc,pdepend,phpmd-ci" />
-  
+          depends="clean,prepare,lint,phploc,pdepend,phpmd-ci,phpcs" />
+
   <target name="clean" description="Cleanup build artifacts">
     <delete dir="${basedir}/build/api"/>
     <delete dir="${basedir}/build/code-browser"/>
@@ -54,7 +54,7 @@
       <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml " />
       <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
       <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
-      <arg path="${basedir}" />
+      <arg path="${basedir}/src" />
     </exec>
   </target>
 
@@ -68,6 +68,18 @@
       <arg value="--exclude" />
       <arg value="${basedir}/tests" />
 
+    </exec>
+  </target>
+
+  <target name="phpcs" description="Find coding standard violations using PHP_CodeSniffer and print human readable output">
+    <exec executable="phpcs" output="/dev/null">
+      <arg value="--report=checkstyle" />
+      <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
+      <arg value="--standard=PSR2" />
+      <arg value="--extensions=php" />
+      <arg value="--ignore=autload.php" />
+      <arg value="${basedir}/src" />
+      <arg value="${basedir}/tests" />
     </exec>
   </target>
 
